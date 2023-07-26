@@ -44,7 +44,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			column.stdout.on('data', d => data2.push(d.toString()));
 			column.stdin.write(data);
 			column.stdin.end();
-			column.on('close', code => {
+			column.on('close', async code => {
 				if(code === 0) {
 					await interaction.reply('```' + data2.join('\n') + '```');
 					externalresolve();
