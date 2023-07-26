@@ -28,16 +28,35 @@ function req(url, method, headers, body) {
 	});
 }
 
+import { spawn } from 'node:child_process';
+
 client.on(Events.InteractionCreate, async interaction => {
 	if(interaction.isChatInputCommand() && interaction.commandName === 'moso') {
 		let data = "Failed to reach trade-alert.com API";
 		try {
+			let externalresolve;
+			let p = new Promise((resolve, reject) => {
+				externalresolve = resolve;
+			});
 			data = JSON.parse(await req(`https://quant.trade-alert.com/?cmd=moso&apikey=${process.env.TRADE_ALERT_API_KEY}&symbol=${interaction.options.getString('ticker')}`));
+			const column = spawn('column', ['-t']);
+			let data2 = [];
+			column.stdout.on('data', d => data2.push(d.toString()));
+			column.stdin.write(data);
+			column.stdin.end();
+			column.on('close', code => {
+				if(code === 0) {
+					await interaction.reply('```' + data2.join('\n') + '```');
+					externalresolve();
+				} else {
+					console.log(`grep process exited with code ${code}`);
+				}
+			});
+			return p;
 		} catch(e) {
 			console.error(interaction);
 			console.error(e);
 		}
-		await interaction.reply('bidibidibidi' + interaction.options.getString('ticker'));
 	}
 });
 
