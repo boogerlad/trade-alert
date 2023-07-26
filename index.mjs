@@ -38,7 +38,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			let p = new Promise((resolve, reject) => {
 				externalresolve = resolve;
 			});
-			data = JSON.parse(await req(`https://quant.trade-alert.com/?cmd=moso&apikey=${process.env.TRADE_ALERT_API_KEY}&symbol=${interaction.options.getString('ticker')}`));
+			data = (await req(`https://quant.trade-alert.com/?cmd=moso&apikey=${process.env.TRADE_ALERT_API_KEY}&symbol=${interaction.options.getString('ticker')}`));
 			const column = spawn('column', ['-t']);
 			let data2 = [];
 			column.stdout.on('data', d => data2.push(d.toString()));
@@ -46,7 +46,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			column.stdin.end();
 			column.on('close', async code => {
 				if(code === 0) {
-					await interaction.reply('```' + data2.join('\n') + '```');
+					await interaction.reply('```' + data2.join('\n').slice(0, 1900) + '```');
 					externalresolve();
 				} else {
 					console.log(`grep process exited with code ${code}`);
