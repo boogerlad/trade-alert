@@ -14,7 +14,7 @@ import gm from 'gm';
 const im = gm.subClass({ imageMagick: true });
 
 import { chromium } from 'playwright';
-const browser = await chromium.launch({headless: false});
+const browser = await chromium.launch();
 const page = await browser.newPage();
 page.setViewportSize({ width: 2000, height: 2000 })
 async function login() {
