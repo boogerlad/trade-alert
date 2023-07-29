@@ -27,6 +27,7 @@ await login();
 page.on('response', async response => {
 	console.log('<<', response.status(), response.url());
 	if(response.url() === 'https://trade-alert.com/http-bind') {
+		try {
 		let t = await response.text()
 		console.log(t);
 		if(t.includes('terminate')) {
@@ -57,6 +58,9 @@ page.on('response', async response => {
 					channel.send(r);
 				}
 			}
+		}
+		} catch(e) {
+			console.error(e);
 		}
 	}
 });
